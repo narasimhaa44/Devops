@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/narasimhaa44/Devops.git'
+            }
+        }
+
+        stage('Build WAR') {
+            steps {
+                dir('tomcat2') {   // ✅ FIXED folder name
+                    sh 'mvn clean package'
+                }
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            steps {
+                sh 'cp tomcat2/target/*.war /opt/tomcat/webapps/'  // ✅ FIXED path
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh 'ls /opt/tomcat/webapps/'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Deployment to Tomcat successful!'
+        }
+        failure {
+            echo '❌ Deployment failed!'
+        }
+    }
+}
