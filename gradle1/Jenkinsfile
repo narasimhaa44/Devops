@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    tools {
+        gradle 'Gradle'   // 🔥 must match name in Global Tool Config
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                   git branch: 'main', url: 'https://github.com/narasimhaa44/Devops.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('gradle1') {
+                    sh 'gradle build'
+                }
+            }
+        }
+
+        stage('Run Application') {
+            steps {
+                dir('gradle1') {
+                    sh 'gradle run'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Gradle pipeline executed successfully!'
+        }
+        failure {
+            echo 'Gradle pipeline failed!'
+        }
+    }
+}
